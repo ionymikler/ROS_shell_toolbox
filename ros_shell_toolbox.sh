@@ -3,7 +3,7 @@
 
 # This script compiles some ROS oriented shell tools.
 
-function verify_env_file(){
+function verify_and_source_env_file(){
     local RED_TXT='\e[31m'
     local NC='\033[0m'
 
@@ -18,7 +18,7 @@ function verify_env_file(){
 }
 main(){
 
-    if ! verify_env_file; then
+    if ! verify_and_source_env_file; then
         return
         # # Continue with the rest of the script
         # source "${ROS_SHELL_TOOLBOX_LOCATION}/utils/utils_source.sh"
