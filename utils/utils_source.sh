@@ -28,22 +28,18 @@ function roslog_del() {
     rm -rf "$ROSLOG_DIR"/*
 }
 
-function rospkg_del() {
-    package_name="$1"
-    if [ -z "$SELECTED_ROS_WS" ]; then
-        log_error "No ROS ('SELECTED_ROS_WS') workspace selected."
-        return 1
-    fi
-    base_dir="$HOME/ws/${SELECTED_ROS_WS}"
+function del_pkg(){
+    local pkg_name=$1
+    local ws_dir="$HOME/ws/$SELECTED_ROS_WS"
 
-    if [ -z "$package_name" ]; then
-        log_error "Package name is required."
+    if [ -z "$pkg_name" ]; then
+        log_error "A package name is required."
         return 1
     fi
 
-    build_dir="${base_dir}/build/${package_name}"
-    install_dir="${base_dir}/install/${package_name}"
-    log_dir="${base_dir}/log/${package_name}"
+    build_dir="${ws_dir}/build/${package_name}"
+    install_dir="${ws_dir}/install/${package_name}"
+    log_dir="${ws_dir}/log/${package_name}"
 
     if [ -d "$build_dir" ]; then
         log_info "Deleting $build_dir"
@@ -65,6 +61,25 @@ function rospkg_del() {
     else
         log_warn "Log directory not found for $package_name"
     fi
+
+
+}
+
+function rospkg_del() {
+    if [ -z "$SELECTED_ROS_WS" ]; then
+        log_error "No ROS ('SELECTED_ROS_WS') workspace selected."
+        return 1
+    fi
+    base_dir="$HOME/ws/${SELECTED_ROS_WS}"
+
+    if [ $# -eq 0 ]; then
+        log_error "At least one package name is required."
+        return 1
+    fi
+
+    for package_name in "$@"; do
+        del_pkg "$package_name"
+    done
 }
 
 function set_ros_ws() {
